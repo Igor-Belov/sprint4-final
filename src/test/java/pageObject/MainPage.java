@@ -2,11 +2,8 @@
 package pageObject;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class MainPage {
     //Стартовая страница приложения
@@ -17,10 +14,6 @@ public class MainPage {
     private static final By ORDER_HOME_BUTTON = By.xpath("//button[@class = 'Button_Button__ra12g Button_Middle__1CSJM']");
     //Строка для вставки для поиска корневых элементов в FAQ
     private static final By ACCORDION_ITEM = By.xpath("//div[@class = 'accordion__item']");
-    //Строка для вставки для поиска заголовков(кнопок) элементов в FAQ
-    private static final By ACCORDION_BUTTON = By.xpath("//div[@class = 'accordion__button']");
-    //Строка для вставки для поиска выподающего контейнера элементов в FAQ
-    private static final By ACCORDION_PANEL = By.xpath("//div[@class = 'accordion__panel']");
 
     private final WebDriver driver;
 
