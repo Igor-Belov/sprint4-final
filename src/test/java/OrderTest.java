@@ -1,22 +1,15 @@
 //Параметрический тест. Тестовые данные представляют собой два массива с данными для заполнения форм и выбором точки входа.
 //На последнем шаге в хроме выявлен баг с появлением окна с информацией о созданном заказе. В firefox все ок.
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import pageObject.MainPage;
-import pageObject.OrderPage;
-
-import java.util.concurrent.TimeUnit;
+import pageobject.OrderPage;
 
 //создадим класс с параметрическим запуском
 @RunWith(Parameterized.class)
-public class OrderTest {
+public class OrderTest extends ParentTest {
     //переменные класса
     private final String name;
     private final String lastName;
@@ -28,8 +21,6 @@ public class OrderTest {
     private final String color;
     private final String comment;
     private final String entryPoint;
-
-    private WebDriver driver;
 
     //конструктор класса OrderTest
     public OrderTest(String name, String lastName, String address, String subway, String phone, String date, String period, String color, String comment, String entryPoint) {
@@ -45,21 +36,8 @@ public class OrderTest {
         this.entryPoint = entryPoint;
     }
 
-    //перед каждым тестом делаем создание объекта драйвера и включаем ему неявное ожидание поиска.
-    @Before
-    public void before() {
-        driver = new ChromeDriver();
-        driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
-    }
-
-    //после каждого теста закрываем браузер и драйвер
-    @After
-    public void teardown() {
-        driver.quit();
-    }
-
     //Входные данные для позитивных сценариев. Комментарий может быть пустым "", тогда поле комментария не будет кликаться.
-    @Parameterized.Parameters()
+    @Parameterized.Parameters(name = "Клиент: {0} {1}")
     public static Object[][] getData() {
         //Сгенерируй тестовые данные (нам нужно название городов и результат поиска)
         return new Object[][] {
@@ -75,11 +53,9 @@ public class OrderTest {
     // подтверждение заказа в третьем окне кнопкой 'Да'.
     // Проверка, что окно о создании оффера появилось.
     @Test
-    public void create_order_positive_data_order_created() {
+    public void createOrderPositiveDataOrderCreated() {
         //главная страница
-        MainPage pageOpen = new MainPage(driver);
-        pageOpen.pageOpen();
-        pageOpen.clickOrderButton(entryPoint);
+        mainPage.clickOrderButton(entryPoint);
         //первая страница заказа
         OrderPage orderPage = new OrderPage(driver);
         orderPage.enterName(name);
@@ -96,6 +72,6 @@ public class OrderTest {
         orderPage.clickOrderButton();
         //третья страница
         orderPage.clickYesOrderButton();
-        Assert.assertTrue(orderPage.isSuccessfulOrderWindowDisplayed());
+        Assert.assertTrue("Не найдено сообщение об успешном оформлении заказа для клиента " + name + lastName, orderPage.isSuccessfulOrderWindowDisplayed());
     }
 }

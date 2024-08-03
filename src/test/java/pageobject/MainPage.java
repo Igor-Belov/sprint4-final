@@ -1,9 +1,12 @@
 //Содержит методы для тестов из файлов OrderTest и QuestionTest.
-package pageObject;
+package pageobject;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+
 
 public class MainPage {
     //Стартовая страница приложения
@@ -14,6 +17,9 @@ public class MainPage {
     private static final By ORDER_HOME_BUTTON = By.xpath("//button[@class = 'Button_Button__ra12g Button_Middle__1CSJM']");
     //Строка для вставки для поиска корневых элементов в FAQ
     private static final By ACCORDION_ITEM = By.xpath("//div[@class = 'accordion__item']");
+    //Кнопка принятия кук
+    private static final By ACCEPT_COOKIES = By.id("rcc-confirm-button");
+
 
     private final WebDriver driver;
 
@@ -24,7 +30,11 @@ public class MainPage {
     //Открыть страницу и согласиться принять куки, что бы это окно более не мешало.
     public void pageOpen() {
         driver.get(PAGE_URL);
-        driver.findElement(By.id("rcc-confirm-button")).click();
+    }
+
+    //Принять куки
+    public void AcceptCookies() {
+        driver.findElement(ACCEPT_COOKIES).click();
     }
 
     //Нажать на кнопку заказ (верхнюю или нижнюю, в зависимости от внешнего параметра)
@@ -41,16 +51,25 @@ public class MainPage {
         driver.findElements(ACCORDION_ITEM).get(number_items).click();
     }
 
-    //Видимость блока ответа
-    public boolean isAnswerDisplayed(int number_items) {
-        WebElement answer = driver.findElements(ACCORDION_ITEM).get(number_items).findElement(By.xpath(".//div[@class = 'accordion__panel']"));
-        return answer.isDisplayed();
+    //Текст вопроса
+    public String isQuestionTextDisplayed(int number_items) {
+        WebElement QuestionTextDisplayed = driver.findElement(By.id("accordion__heading-"+number_items));
+        return QuestionTextDisplayed.getText();
+    }
+
+    //Блок ответа отображается на экране
+    public boolean isBlockAnswerTextDisplayed(int number_items) {
+        WebElement answerBlockTextDisplayed = driver.findElement(By.id("accordion__panel-"+number_items));
+        return answerBlockTextDisplayed.isDisplayed();//
     }
 
     //Наличие видимого текста (не пустая строка) в блоке ответа
-    public boolean isAnswerTextDisplayed(int number_items) {
-        WebElement answerTextDisplayed = driver.findElements(ACCORDION_ITEM).get(number_items).findElement(By.xpath(".//div[@class = 'accordion__panel']/p"));
-        return !answerTextDisplayed.getText().isEmpty();//getText - возвращает только для видимых объектов
+    public String isAnswerTextDisplayed(int number_items) {
+        clickAccordionItemButton(number_items);
+        WebElement answerTextDisplayed = driver.findElement(By.id("accordion__panel-"+number_items));
+        new WebDriverWait(driver, 3)
+                .until(ExpectedConditions.visibilityOfElementLocated(By.id("accordion__panel-"+number_items)));
+        return answerTextDisplayed.getText();//getText - возвращает только для видимых объектов
     }
 
     //Получить количество вопросов в FAQ
@@ -58,6 +77,3 @@ public class MainPage {
         return driver.findElements(ACCORDION_ITEM).size();
     }
 }
-
-
-

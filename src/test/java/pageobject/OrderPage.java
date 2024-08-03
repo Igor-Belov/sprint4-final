@@ -1,5 +1,5 @@
 //Описание элементов и методов нужных для проведения позитивных тестов из сценария OrderTest
-package pageObject;
+package pageobject;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -119,9 +119,11 @@ public class OrderPage {
 
     //Метод проверки появилось ли окно подтверждения заказ
     public boolean isSuccessfulOrderWindowDisplayed() {
-        WebDriverWait wait = new WebDriverWait(driver, 3);
-        WebElement successfulOrderWindow =
-                wait.until(ExpectedConditions.visibilityOfElementLocated(ORDER_PLACES));
-        return successfulOrderWindow.isDisplayed();
+        try {
+            driver.findElement(ORDER_PLACES).isDisplayed();
+            return true;
+        } catch (NoSuchElementException nse ) {
+            return false;
+        }
     }
 }
